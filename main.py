@@ -1,16 +1,24 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import requests
+import json
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def get_tweets_by_word(word, bearer_token):
+    url = 'https://api.twitter.com/1.1/search/tweets.json'
+    param = {'q': word, 'count': 100, 'result_type': 'recent'}
+    header = {'Authorization': f'Bearer {bearer_token}'}
+    response = requests.get(url, headers=header, params=param)
+    print(response.json())
+    return response.json()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def save_json_to_file(file_name, file_path, data):
+    with open(file_path + file_name, 'w') as outfile:
+        json.dump(data, outfile)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+if __name__ == "__main__":
+    bearer_token = input('please enter your twitter bearer token:\n')
+    word_to_find = input('Please enter a word to search for in tweets:\n')
+
+    json_data = get_tweets_by_word(word=word_to_find, bearer_token=bearer_token)
+    save_json_to_file(file_path='twitter_responses/', file_name=f'{word_to_find}.json', data=json_data)
